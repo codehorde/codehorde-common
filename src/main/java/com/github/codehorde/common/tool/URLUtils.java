@@ -1,4 +1,4 @@
-package com.raycloud.rhino.recommend.utils;
+package com.github.codehorde.common.tool;
 
 import org.apache.commons.lang3.StringUtils;
 
