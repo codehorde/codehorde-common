@@ -24,8 +24,8 @@ public final class BeanCopierUtils {
      * 源对象和目标对象属性名称相同但类型不同，目标对象处理为null
      */
     public static void simpleMapping(Object from, Object to) {
-        BeanCopier bc = findCopier(from.getClass(), to.getClass(), NULL_CONVERTER);
-        bc.copy(from, to, NULL_CONVERTER);//Converter可有可无，BeanCopier没有重载的函数
+        BeanCopier bc = findCopier(from.getClass(), to.getClass(), false);
+        bc.copy(from, to, null);//Converter可有可无，BeanCopier没有重载的函数
     }
 
     /**
@@ -33,7 +33,7 @@ public final class BeanCopierUtils {
      * 目标对象使用强制转换的结果，可能会报转换异常错误（ClassCastException）
      */
     public static void directMapping(Object from, Object to) {
-        BeanCopier bc = findCopier(from.getClass(), to.getClass(), DIRECT_CONVERTER);
+        BeanCopier bc = findCopier(from.getClass(), to.getClass(), true);
         bc.copy(from, to, DIRECT_CONVERTER);
     }
 
@@ -49,44 +49,41 @@ public final class BeanCopierUtils {
      * </pre>
      */
     public static void smartMapping(Object from, Object to) {
-        BeanCopier bc = findCopier(from.getClass(), to.getClass(), SMART_CONVERTER);
+        BeanCopier bc = findCopier(from.getClass(), to.getClass(), true);
         bc.copy(from, to, SMART_CONVERTER);
     }
 
     /*
         SourceClass --> Map<TargetClass, Map<Converter, BeanCopier>>
     */
-    private static ConcurrentMap<Class<?>, ConcurrentMap<Class<?>, ConcurrentMap<Converter, BeanCopier>>>
-            beanCopiers = new ConcurrentHashMap<Class<?>, ConcurrentMap<Class<?>, ConcurrentMap<Converter, BeanCopier>>>();
+    private static ConcurrentMap<Class<?>, ConcurrentMap<Class<?>, ConcurrentMap<Boolean, BeanCopier>>>
+            beanCopiers = new ConcurrentHashMap<Class<?>, ConcurrentMap<Class<?>, ConcurrentMap<Boolean, BeanCopier>>>();
 
     private final static Converter NULL_CONVERTER = new SimpleConverter();
     private final static Converter DIRECT_CONVERTER = new DirectConverter();
     private final static Converter SMART_CONVERTER = new SmartConverter();
 
     public static BeanCopier findCopier(Class<?> sourceClass, Class<?> targetClass) {
-        return findCopier(sourceClass, targetClass, DIRECT_CONVERTER);
+        return findCopier(sourceClass, targetClass, false);
     }
 
-    public static BeanCopier findCopier(Class<?> sourceClass, Class<?> targetClass, Converter converter) {
-        ConcurrentMap<Class<?>, ConcurrentMap<Converter, BeanCopier>> targetCopierMap = beanCopiers.get(sourceClass);
+    public static BeanCopier findCopier(Class<?> sourceClass, Class<?> targetClass, boolean useConverter) {
+        ConcurrentMap<Class<?>, ConcurrentMap<Boolean, BeanCopier>> targetCopierMap = beanCopiers.get(sourceClass);
         if (targetCopierMap == null) {
-            targetCopierMap = new ConcurrentHashMap<Class<?>, ConcurrentMap<Converter, BeanCopier>>();
+            targetCopierMap = new ConcurrentHashMap<Class<?>, ConcurrentMap<Boolean, BeanCopier>>();
             beanCopiers.putIfAbsent(sourceClass, targetCopierMap);
         }
-        ConcurrentMap<Converter, BeanCopier> copierMap = targetCopierMap.get(targetClass);
+
+        ConcurrentMap<Boolean, BeanCopier> copierMap = targetCopierMap.get(targetClass);
         if (copierMap == null) {
-            copierMap = new ConcurrentHashMap<Converter, BeanCopier>();
+            copierMap = new ConcurrentHashMap<Boolean, BeanCopier>();
             targetCopierMap.putIfAbsent(targetClass, copierMap);
         }
 
-        BeanCopier copier = copierMap.get(converter);
+        BeanCopier copier = copierMap.get(useConverter);
         if (copier == null) {
-            if (converter == NULL_CONVERTER) {
-                copier = BeanCopier.create(sourceClass, targetClass, false);
-            } else {
-                copier = BeanCopier.create(sourceClass, targetClass, true);
-            }
-            copierMap.putIfAbsent(converter, copier);
+            copier = BeanCopier.create(sourceClass, targetClass, useConverter);
+            copierMap.putIfAbsent(useConverter, copier);
         }
         return copier;
     }
