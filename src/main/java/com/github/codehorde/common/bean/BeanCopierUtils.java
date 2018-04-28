@@ -76,7 +76,7 @@ public final class BeanCopierUtils {
         ConcurrentMap<Converter, BeanCopier> copierMap = targetCopierMap.get(targetClass);
         if (copierMap == null) {
             copierMap = new ConcurrentHashMap<Converter, BeanCopier>();
-            targetCopierMap.putIfAbsent(sourceClass, copierMap);
+            targetCopierMap.putIfAbsent(targetClass, copierMap);
         }
 
         BeanCopier copier = copierMap.get(converter);
