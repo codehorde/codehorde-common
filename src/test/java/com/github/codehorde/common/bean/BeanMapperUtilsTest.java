@@ -1,4 +1,5 @@
 package com.github.codehorde.common.bean;
+
 import com.github.codehorde.common.bean.dto.AAA;
 import com.github.codehorde.common.bean.dto.BBB;
 import com.github.codehorde.common.bean.dto.CCC;
@@ -41,11 +42,11 @@ public class BeanMapperUtilsTest {
         System.out.println(bbb1);
 
         BBB bbb2 = new BBB();
-        BeanCopierUtils.directMapping(aaa, bbb2);
+        BeanCopierUtils.smartMapping(aaa, bbb2);
         System.out.println(bbb2);
 
         BBB bbb3 = new BBB();
-        BeanCopierUtils.smartMapping(aaa, bbb3);
+        BeanCopierUtils.directMapping(aaa, bbb3);//error
         System.out.println(bbb3);
     }
 
