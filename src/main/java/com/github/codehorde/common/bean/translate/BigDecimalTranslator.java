@@ -13,7 +13,7 @@ public class BigDecimalTranslator implements PropertyTranslator<BigDecimal> {
         }
 
         if (propValue instanceof Number) {
-            return BigDecimal.valueOf(((Number) propValue).longValue());
+            return new BigDecimal(String.valueOf(propValue));
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
