@@ -140,17 +140,6 @@ public final class URLUtils {
         }
     }
 
-
-    public static void main(String[] args) {
-        String uri = "https://detail.tmall.com/item.htm?spm=%E4%B8%AD%E6%96%87&acm=%E6%98%AF%E7%9A%84%E5%8F%91%E7%94%9F" +
-                "&id=522682640316&scm=1003.4.lb-zebra-268325-2517099.ITEM_522682640316_2207029";
-        System.out.println(isValidUrl(uri));
-        Map<String, List<String>> parameters = URLUtils.getQueryParams(uri);
-        for (Map.Entry<String, List<String>> entry : parameters.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
-    }
-
     private URLUtils() {
     }
 }

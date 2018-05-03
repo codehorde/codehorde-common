@@ -7,16 +7,17 @@ import java.math.BigInteger;
  */
 public class BigIntegerTranslator implements PropertyTranslator<BigInteger> {
 
-    public BigInteger convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return new BigInteger((String) propValue);
+    public BigInteger convert(Object sourcePropValue, Class targetPropClass,
+                              Object context, Object sourceObject, Object targetObject) {
+        if (sourcePropValue instanceof String) {
+            return new BigInteger((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return BigInteger.valueOf(((Number) propValue).longValue());
+        if (sourcePropValue instanceof Number) {
+            return BigInteger.valueOf(((Number) sourcePropValue).longValue());
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

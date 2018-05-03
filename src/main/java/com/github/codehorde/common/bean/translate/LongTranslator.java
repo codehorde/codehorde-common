@@ -5,16 +5,17 @@ package com.github.codehorde.common.bean.translate;
  */
 public class LongTranslator implements PropertyTranslator<Long> {
 
-    public Long convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return Long.parseLong((String) propValue);
+    public Long convert(Object sourcePropValue, Class targetPropClass,
+                        Object context, Object sourceObject, Object targetObject) {
+        if (sourcePropValue instanceof String) {
+            return Long.parseLong((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return ((Number) propValue).longValue();
+        if (sourcePropValue instanceof Number) {
+            return ((Number) sourcePropValue).longValue();
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

@@ -5,16 +5,17 @@ package com.github.codehorde.common.bean.translate;
  */
 public class ShortTranslator implements PropertyTranslator<Short> {
 
-    public Short convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return Short.parseShort((String) propValue);
+    public Short convert(Object sourcePropValue, Class targetPropClass,
+                         Object context, Object sourceObject, Object targetObject) {
+        if (sourcePropValue instanceof String) {
+            return Short.parseShort((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return ((Number) propValue).shortValue();
+        if (sourcePropValue instanceof Number) {
+            return ((Number) sourcePropValue).shortValue();
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

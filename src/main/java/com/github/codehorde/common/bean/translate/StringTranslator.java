@@ -6,16 +6,17 @@ package com.github.codehorde.common.bean.translate;
 public class StringTranslator implements PropertyTranslator<String> {
 
     @Override
-    public String convert(Object propValue, Class targetType) {
-        if (String.class != propValue.getClass()) {
-            if (propValue instanceof Enum) {
-                return ((Enum) propValue).name();
+    public String convert(Object sourcePropValue, Class targetPropClass,
+                          Object context, Object sourceObject, Object targetObject) {
+        if (String.class != sourcePropValue.getClass()) {
+            if (sourcePropValue instanceof Enum) {
+                return ((Enum) sourcePropValue).name();
             } else {
-                return String.valueOf(propValue);
+                return String.valueOf(sourcePropValue);
             }
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

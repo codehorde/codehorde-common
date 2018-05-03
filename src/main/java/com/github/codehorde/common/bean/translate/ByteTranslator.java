@@ -5,16 +5,17 @@ package com.github.codehorde.common.bean.translate;
  */
 public class ByteTranslator implements PropertyTranslator<Byte> {
 
-    public Byte convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return Byte.parseByte((String) propValue);
+    public Byte convert(Object sourcePropValue, Class targetPropClass,
+                        Object context, Object sourceObject, Object targetObject) {
+        if (sourcePropValue instanceof String) {
+            return Byte.parseByte((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return ((Number) propValue).byteValue();
+        if (sourcePropValue instanceof Number) {
+            return ((Number) sourcePropValue).byteValue();
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

@@ -5,16 +5,17 @@ package com.github.codehorde.common.bean.translate;
  */
 public class DoubleTranslator implements PropertyTranslator<Double> {
 
-    public Double convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return Double.parseDouble((String) propValue);
+    public Double convert(Object sourcePropValue, Class targetPropClass,
+                          Object context, Object sourceObject, Object targetObject) {
+        if (sourcePropValue instanceof String) {
+            return Double.parseDouble((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return ((Number) propValue).doubleValue();
+        if (sourcePropValue instanceof Number) {
+            return ((Number) sourcePropValue).doubleValue();
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

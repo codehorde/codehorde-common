@@ -5,16 +5,17 @@ package com.github.codehorde.common.bean.translate;
  */
 public class IntegerTranslator implements PropertyTranslator<Integer> {
 
-    public Integer convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return Integer.parseInt((String) propValue);
+    public Integer convert(Object sourcePropValue, Class targetPropClass,
+                           Object context, Object sourceObject, Object targetObject) {
+        if (sourcePropValue instanceof String) {
+            return Integer.parseInt((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return ((Number) propValue).intValue();
+        if (sourcePropValue instanceof Number) {
+            return ((Number) sourcePropValue).intValue();
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

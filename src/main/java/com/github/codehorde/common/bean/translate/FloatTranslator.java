@@ -5,16 +5,18 @@ package com.github.codehorde.common.bean.translate;
  */
 public class FloatTranslator implements PropertyTranslator<Float> {
 
-    public Float convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return Float.parseFloat((String) propValue);
+    public Float convert(Object sourcePropValue, Class targetPropClass,
+                         Object context, Object sourceObject, Object targetObject) {
+
+        if (sourcePropValue instanceof String) {
+            return Float.parseFloat((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return ((Number) propValue).floatValue();
+        if (sourcePropValue instanceof Number) {
+            return ((Number) sourcePropValue).floatValue();
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }

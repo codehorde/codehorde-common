@@ -7,16 +7,17 @@ import java.math.BigDecimal;
  */
 public class BigDecimalTranslator implements PropertyTranslator<BigDecimal> {
 
-    public BigDecimal convert(Object propValue, Class targetType) {
-        if (propValue instanceof String) {
-            return new BigDecimal((String) propValue);
+    public BigDecimal convert(Object sourcePropValue, Class targetPropClass,
+                              Object context, Object sourceObject, Object targetObject) {
+        if (sourcePropValue instanceof String) {
+            return new BigDecimal((String) sourcePropValue);
         }
 
-        if (propValue instanceof Number) {
-            return new BigDecimal(String.valueOf(propValue));
+        if (sourcePropValue instanceof Number) {// ?
+            return new BigDecimal(String.valueOf(sourcePropValue));
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + propValue + "] to " + targetType.getName());
+                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
     }
 }
