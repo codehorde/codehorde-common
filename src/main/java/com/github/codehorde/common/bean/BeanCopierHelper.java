@@ -2,10 +2,10 @@ package com.github.codehorde.common.bean;
 
 import com.github.codehorde.common.bean.support.ClassHelper;
 import com.github.codehorde.common.bean.support.DirectConverter;
-import com.github.codehorde.common.bean.support.PropertyTranslator;
-import com.github.codehorde.common.bean.support.TranslatorRegistry;
+import com.github.codehorde.common.bean.support.SmartConverter;
 import net.sf.cglib.beans.BeanCopier;
 
+import java.lang.reflect.Type;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -50,6 +50,8 @@ public final class BeanCopierHelper {
         return target;
     }
 
+    public static ThreadLocal<Type> Type = new ThreadLocal<>();
+
     /**
      * <pre>
      * 如果源属性和目标属性名称相同但类型不同，尝试从支持的转换器中转换，参见PropertyTranslator
@@ -61,10 +63,15 @@ public final class BeanCopierHelper {
      *     目标对象使用强制转换的结果，可能会报转换异常错误（ClassCastException）
      * </pre>
      */
-    public static <T> T createBean(Object source, Class<T> targetClass) {
-        PropertyTranslator translator = TranslatorRegistry.findPropertyTranslator(targetClass);
-        //noinspection unchecked
-        return (T) translator.translate(source, targetClass, null);
+    public static <T> T deepClone(Object source, Class<T> targetClass) {
+        T target = ClassHelper.instantiate(targetClass);
+        deepClone(source, target);
+        return target;
+    }
+
+    public static void deepClone(Object source, Object target) {
+        BeanCopier copier = findCopier(source.getClass(), target.getClass(), true);
+        copier.copy(source, target, new SmartConverter(target.getClass()));
     }
 
     /*

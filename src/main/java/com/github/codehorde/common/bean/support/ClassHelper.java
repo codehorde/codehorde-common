@@ -5,8 +5,7 @@ import net.sf.cglib.reflect.FastClass;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -207,6 +206,14 @@ public final class ClassHelper {
      * 留意这里返回的对象不是反射调用构造方法创建出来的（Cglib FastClass）
      */
     public static <T> T instantiate(Class<?> clazz) {
+        if (List.class.isAssignableFrom(clazz)) {
+            return (T) new ArrayList<>();
+        } else if (Set.class.isAssignableFrom(clazz)) {
+            return (T) new HashSet<>();
+        } else if (Map.class.isAssignableFrom(clazz)) {
+            return (T) new HashMap<>();
+        }
+
         FastClass fastClass = getFastClass(clazz);
 
         try {

@@ -2,6 +2,8 @@ package com.github.codehorde.common.bean.support;
 
 import net.sf.cglib.core.Converter;
 
+import java.lang.reflect.ParameterizedType;
+
 /**
  * <pre>
  *     补充了一部分自动处理的方式
@@ -9,6 +11,12 @@ import net.sf.cglib.core.Converter;
  * </pre>
  */
 public class SmartConverter implements Converter {
+
+    private final Class targetClass;
+
+    public SmartConverter(Class targetClass) {
+        this.targetClass = targetClass;
+    }
 
     @Override
     public Object convert(Object sourcePropValue, Class targetPropClass, Object context) {
@@ -20,7 +28,13 @@ public class SmartConverter implements Converter {
         if (!ClassHelper.matchCompatible(sourcePropClass, targetPropClass)) {
             PropertyTranslator propertyTranslator = TranslatorRegistry.findPropertyTranslator(targetPropClass);
             if (propertyTranslator != null) {
-                return propertyTranslator.translate(sourcePropValue, targetPropClass, context);
+                ParameterizedType methodParameterType = ClassHelper
+                        .getMethodParameterType(targetClass, (String) context, targetPropClass);
+                if (methodParameterType == null) {
+                    return propertyTranslator.translate(sourcePropValue, targetPropClass, context);
+                } else {
+                    return propertyTranslator.translate(sourcePropValue, methodParameterType, context);
+                }
             }
         }
 

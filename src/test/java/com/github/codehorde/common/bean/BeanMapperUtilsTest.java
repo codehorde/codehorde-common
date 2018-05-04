@@ -42,15 +42,15 @@ public class BeanMapperUtilsTest {
         System.out.println(bbb1);
 
         BBB bbb2 = new BBB();
-        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
+        com.github.codehorde.common.bean.BeanCopierHelper.deepClone(aaa, BBB.class);
         System.out.println(bbb2);
 
         BBB bbb3 = new BBB();
-        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
+        com.github.codehorde.common.bean.BeanCopierHelper.deepClone(aaa, BBB.class);
         System.out.println(bbb3);
 
         BBB bbb4 = new BBB();
-        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
+        com.github.codehorde.common.bean.BeanCopierHelper.deepClone(aaa, BBB.class);
         System.out.println(bbb4);
 
         //StringDecimal会报错
@@ -78,7 +78,7 @@ public class BeanMapperUtilsTest {
         aaa.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb = new BBB();
-        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
+        com.github.codehorde.common.bean.BeanCopierHelper.deepClone(aaa, BBB.class);
         System.out.println(bbb);
     }
 
@@ -101,7 +101,7 @@ public class BeanMapperUtilsTest {
         ccc.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb = new BBB();
-        com.github.codehorde.common.bean.BeanCopierHelper.createBean(ccc, BBB.class);
+        com.github.codehorde.common.bean.BeanCopierHelper.deepClone(ccc, BBB.class);
         System.out.println(bbb);
     }
 }

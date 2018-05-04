@@ -29,7 +29,7 @@ public class ListTranslator implements PropertyTranslator<List<?>> {
                 if (ClassHelper.isBasicClass(componentClass)) {
                     target = source;
                 } else {
-                    target = BeanCopierHelper.createBean(source, componentClass);
+                    target = BeanCopierHelper.deepClone(source, componentClass);
                 }
                 //noinspection unchecked
                 retList.add(target);

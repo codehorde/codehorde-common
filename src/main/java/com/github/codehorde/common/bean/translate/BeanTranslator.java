@@ -3,8 +3,6 @@ package com.github.codehorde.common.bean.translate;
 import com.github.codehorde.common.bean.BeanCopierHelper;
 import com.github.codehorde.common.bean.support.ClassHelper;
 import com.github.codehorde.common.bean.support.PropertyTranslator;
-import com.github.codehorde.common.bean.support.SmartConverter;
-import net.sf.cglib.beans.BeanCopier;
 
 import java.lang.reflect.Type;
 
@@ -17,10 +15,9 @@ public class BeanTranslator implements PropertyTranslator<Object> {
 
     @Override
     public Object translate(Object sourcePropValue, Type targetPropType, Object context) {
-        Class targetPropClass = ClassHelper.getWrapClass(targetPropType);
-        BeanCopier copier = BeanCopierHelper.findCopier(sourcePropValue.getClass(), targetPropClass, true);
-        Object targetPropObject = ClassHelper.instantiate(targetPropClass);
-        copier.copy(sourcePropValue, targetPropObject, new SmartConverter());
-        return targetPropObject;
+        Class<?> targetClass = ClassHelper.getWrapClass(targetPropType);
+        Object target = ClassHelper.instantiate(targetClass);
+        BeanCopierHelper.deepClone(sourcePropValue, target);
+        return target;
     }
 }

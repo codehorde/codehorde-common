@@ -29,7 +29,7 @@ public class SetTranslator implements PropertyTranslator<Set<?>> {
                 if (ClassHelper.isBasicClass(componentClass)) {
                     target = source;
                 } else {
-                    target = BeanCopierHelper.createBean(source, componentClass);
+                    target = BeanCopierHelper.deepClone(source, componentClass);
                 }
                 //noinspection unchecked
                 retSet.add(target);

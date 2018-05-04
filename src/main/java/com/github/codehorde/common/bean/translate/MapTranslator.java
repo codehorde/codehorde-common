@@ -49,13 +49,13 @@ public class MapTranslator implements PropertyTranslator<Map<?, ?>> {
                 if (ClassHelper.isBasicClass(keyClass)) {
                     targetKey = sourceKey;
                 } else {
-                    targetKey = BeanCopierHelper.createBean(sourceKey, keyClass);
+                    targetKey = BeanCopierHelper.deepClone(sourceKey, keyClass);
                 }
                 Object targetValue;
                 if (ClassHelper.isBasicClass(valueClass)) {
                     targetValue = sourceValue;
                 } else {
-                    targetValue = BeanCopierHelper.createBean(sourceValue, valueClass);
+                    targetValue = BeanCopierHelper.deepClone(sourceValue, valueClass);
                 }
                 //noinspection unchecked
                 retMap.put(targetKey, targetValue);
