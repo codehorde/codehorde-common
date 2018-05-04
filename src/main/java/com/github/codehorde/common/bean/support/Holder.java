@@ -3,14 +3,14 @@ package com.github.codehorde.common.bean.support;
 /**
  * Created by baomingfeng at 2018-04-28 16:04:14
  */
-public class ValueHolder<T> {
+public class Holder<T> {
 
     private volatile T value;
 
-    public ValueHolder() {
+    public Holder() {
     }
 
-    public ValueHolder(T value) {
+    public Holder(T value) {
         this.value = value;
     }
 
@@ -22,4 +22,10 @@ public class ValueHolder<T> {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return "Holder{" +
+                "value=" + value +
+                '}';
+    }
 }

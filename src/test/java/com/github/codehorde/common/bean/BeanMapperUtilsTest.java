@@ -38,24 +38,24 @@ public class BeanMapperUtilsTest {
         aaa.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb1 = new BBB();
-        BeanCopierUtils.simpleMapping(aaa, bbb1);
+        com.github.codehorde.common.bean.BeanCopierHelper.simpleCopy(aaa, bbb1);
         System.out.println(bbb1);
 
         BBB bbb2 = new BBB();
-        BeanCopierUtils.adaptMapping(aaa, bbb2);
+        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
         System.out.println(bbb2);
 
         BBB bbb3 = new BBB();
-        BeanCopierUtils.adaptMapping(aaa, bbb3);
+        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
         System.out.println(bbb3);
 
         BBB bbb4 = new BBB();
-        BeanCopierUtils.adaptMapping(aaa, bbb4);
+        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
         System.out.println(bbb4);
 
         //StringDecimal会报错
         BBB bbbx = new BBB();
-        BeanCopierUtils.directMapping(aaa, bbbx);
+        com.github.codehorde.common.bean.BeanCopierHelper.directCopy(aaa, bbbx);
         System.out.println(bbbx);
     }
 
@@ -78,7 +78,7 @@ public class BeanMapperUtilsTest {
         aaa.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb = new BBB();
-        BeanCopierUtils.adaptMapping(aaa, bbb);
+        com.github.codehorde.common.bean.BeanCopierHelper.createBean(aaa, BBB.class);
         System.out.println(bbb);
     }
 
@@ -101,7 +101,7 @@ public class BeanMapperUtilsTest {
         ccc.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb = new BBB();
-        BeanCopierUtils.adaptMapping(ccc, bbb);
+        com.github.codehorde.common.bean.BeanCopierHelper.createBean(ccc, BBB.class);
         System.out.println(bbb);
     }
 }

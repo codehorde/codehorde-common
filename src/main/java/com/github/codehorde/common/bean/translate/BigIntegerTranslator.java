@@ -1,5 +1,8 @@
 package com.github.codehorde.common.bean.translate;
 
+import com.github.codehorde.common.bean.support.PropertyTranslator;
+
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 
 /**
@@ -7,8 +10,8 @@ import java.math.BigInteger;
  */
 public class BigIntegerTranslator implements PropertyTranslator<BigInteger> {
 
-    public BigInteger convert(Object sourcePropValue, Class targetPropClass,
-                              Object context, Object sourceObject, Object targetObject) {
+    @Override
+    public BigInteger translate(Object sourcePropValue, Type targetPropType, Object context) {
         if (sourcePropValue instanceof String) {
             return new BigInteger((String) sourcePropValue);
         }
@@ -18,6 +21,6 @@ public class BigIntegerTranslator implements PropertyTranslator<BigInteger> {
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
+                + ": Error in translate [" + sourcePropValue + "] to " + targetPropType.toString());
     }
 }

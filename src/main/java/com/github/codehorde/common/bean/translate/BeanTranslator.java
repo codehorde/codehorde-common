@@ -1,7 +1,12 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierUtils;
+import com.github.codehorde.common.bean.BeanCopierHelper;
 import com.github.codehorde.common.bean.support.ClassHelper;
+import com.github.codehorde.common.bean.support.PropertyTranslator;
+import com.github.codehorde.common.bean.support.SmartConverter;
+import net.sf.cglib.beans.BeanCopier;
+
+import java.lang.reflect.Type;
 
 /**
  * 普通对象互相复制
@@ -11,10 +16,11 @@ import com.github.codehorde.common.bean.support.ClassHelper;
 public class BeanTranslator implements PropertyTranslator<Object> {
 
     @Override
-    public Object convert(Object sourcePropValue, Class targetPropClass,
-                          Object context, Object sourceObject, Object targetObject) {
-        Object retVal = ClassHelper.instantiate(targetPropClass);
-        BeanCopierUtils.adaptMapping(sourcePropValue, retVal);
-        return retVal;
+    public Object translate(Object sourcePropValue, Type targetPropType, Object context) {
+        Class targetPropClass = ClassHelper.getWrapClass(targetPropType);
+        BeanCopier copier = BeanCopierHelper.findCopier(sourcePropValue.getClass(), targetPropClass, true);
+        Object targetPropObject = ClassHelper.instantiate(targetPropClass);
+        copier.copy(sourcePropValue, targetPropObject, new SmartConverter());
+        return targetPropObject;
     }
 }

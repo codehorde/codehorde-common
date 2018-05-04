@@ -1,8 +1,8 @@
 package com.github.codehorde.common.bean;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import net.sf.cglib.core.DebuggingClassWriter;
+
+import java.util.*;
 
 /**
  * Created by baomingfeng at 2018-05-02 11:19:36
@@ -10,9 +10,13 @@ import java.util.List;
 public class BeanCopierTest {
 
     public static void main(String[] args) {
+
+        System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "/Users/baomingfeng/Downloads/cglib");
+
+
         PostOrderCommentVo commentVo = new PostOrderCommentVo();
         commentVo.setOrderId(3L);
-        List<PostTradeCommentVo> tradeComments = new ArrayList<PostTradeCommentVo>();
+        List<PostTradeCommentVo> tradeComments = new ArrayList<>();
         PostTradeCommentVo tradeComment = new PostTradeCommentVo();
         tradeComment.setTradeId(33L);
         tradeComment.setScore(5);
@@ -35,10 +39,38 @@ public class BeanCopierTest {
         tradeComment.setTags(Arrays.asList(87L, 93L));
         commentVo.setTradeComment(tradeComment);
 
-        PostOrderCommentDto commentDto = new PostOrderCommentDto();
+        tradeComment = new PostTradeCommentVo();
+        tradeComment.setTradeId(67L);
+        tradeComment.setScore(2);
+        tradeComment.setContent("五星XXX！");
+        tradeComment.setTags(Arrays.asList(91L, 7L, 3L));
+        commentVo.setHolder(new PostTradeCommentVoHolder(tradeComment));
 
-        BeanCopierUtils.adaptMapping(commentVo, commentDto);
+        Map<PostTradeCommentVo, List<PostTradeCommentVo>> map = new HashMap<>();
+        PostTradeCommentVo key = new PostTradeCommentVo();
+        key.setTradeId(111L);
+        key.setScore(111);
+        key.setContent("Key");
+        key.setTags(Arrays.asList(111L, 111L));
 
-        System.out.println(commentDto);
+        List<PostTradeCommentVo> valueList = new ArrayList<>();
+        PostTradeCommentVo value1 = new PostTradeCommentVo();
+        value1.setTradeId(222L);
+        value1.setScore(222);
+        value1.setContent("Value1");
+        value1.setTags(Arrays.asList(222L, 222L));
+        valueList.add(value1);
+        PostTradeCommentVo value2 = new PostTradeCommentVo();
+        value2.setTradeId(333L);
+        value2.setScore(333);
+        value2.setContent("Value2");
+        value2.setTags(Arrays.asList(333L, 333L));
+        valueList.add(value2);
+        map.put(key, valueList);
+        commentVo.setMap(map);
+
+        Object retVal = com.github.codehorde.common.bean.BeanCopierHelper.createBean(commentVo, PostOrderCommentDto.class);
+
+        System.out.println(retVal);
     }
 }

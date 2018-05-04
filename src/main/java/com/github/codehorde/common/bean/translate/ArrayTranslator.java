@@ -1,9 +1,10 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierUtils;
-import com.github.codehorde.common.bean.support.ClassHelper;
+import com.github.codehorde.common.bean.BeanCopierHelper;
+import com.github.codehorde.common.bean.support.PropertyTranslator;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 
 /**
  * Created by baomingfeng at 2018-05-02 13:54:09
@@ -11,19 +12,18 @@ import java.lang.reflect.Array;
 public class ArrayTranslator implements PropertyTranslator<Object> {
 
     @Override
-    public Object convert(Object sourcePropValue, Class targetPropClass,
-                          Object context, Object sourceObject, Object targetObject) {
+    public Object translate(Object sourcePropValue, Type targetPropType, Object context) {
         Class<?> sourcePropClass = sourcePropValue.getClass();
 
         if (sourcePropClass.isArray()) {
+            Class targetPropClass = (Class) targetPropType;
             Class componentType = targetPropClass.getComponentType();
             int len = Array.getLength(sourcePropValue);
             Object retArray = Array.newInstance(componentType, len);
             for (int index = 0; index < len; index++) {
-                Object from = Array.get(sourcePropValue, index);
-                Object to = ClassHelper.instantiate(componentType);
-                BeanCopierUtils.adaptMapping(from, to);
-                Array.set(retArray, index, to);
+                Object source = Array.get(sourcePropValue, index);
+                Object target = BeanCopierHelper.createBean(source, componentType);
+                Array.set(retArray, index, target);
             }
             return retArray;
         }
@@ -33,6 +33,6 @@ public class ArrayTranslator implements PropertyTranslator<Object> {
         */
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
+                + ": Error in translate [" + sourcePropValue + "] to " + targetPropType.toString());
     }
 }

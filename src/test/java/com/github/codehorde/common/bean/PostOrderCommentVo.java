@@ -1,6 +1,7 @@
 package com.github.codehorde.common.bean;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 提交评论
@@ -14,6 +15,10 @@ public class PostOrderCommentVo implements java.io.Serializable {
     private List<PostTradeCommentVo> tradeComments;
 
     private PostTradeCommentVo tradeComment;
+
+    private PostTradeCommentVoHolder holder;
+
+    private Map<PostTradeCommentVo, List<PostTradeCommentVo>> map;
 
     public Long getOrderId() {
         return orderId;
@@ -39,12 +44,30 @@ public class PostOrderCommentVo implements java.io.Serializable {
         this.tradeComment = tradeComment;
     }
 
+    public PostTradeCommentVoHolder getHolder() {
+        return holder;
+    }
+
+    public void setHolder(PostTradeCommentVoHolder holder) {
+        this.holder = holder;
+    }
+
+    public Map<PostTradeCommentVo, List<PostTradeCommentVo>> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<PostTradeCommentVo, List<PostTradeCommentVo>> map) {
+        this.map = map;
+    }
+
     @Override
     public String toString() {
         return "PostOrderCommentVo{" +
                 "orderId=" + orderId +
                 ", tradeComments=" + tradeComments +
                 ", tradeComment=" + tradeComment +
+                ", holder=" + holder +
+                ", map=" + map +
                 '}';
     }
 }

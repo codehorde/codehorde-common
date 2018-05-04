@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public final class ClassHelper {
 
     private static ConcurrentMap<Class<?>, Class<?>>
-            PrimaryWrapTypeMap = new ConcurrentHashMap<Class<?>, Class<?>>();
+            PrimaryWrapTypeMap = new ConcurrentHashMap<>();
 
     static {
         PrimaryWrapTypeMap.put(long.class, Long.class);
@@ -36,7 +36,7 @@ public final class ClassHelper {
     }
 
     private static final CopyOnWriteArraySet<Class<?>>
-            BasicClasses = new CopyOnWriteArraySet<Class<?>>();
+            BasicClasses = new CopyOnWriteArraySet<>();
 
     static {
         BasicClasses.addAll(
@@ -54,7 +54,7 @@ public final class ClassHelper {
         targetPropClass --> Map<sourcePropClass, Boolean>
     */
     private static ConcurrentMap<Class, ConcurrentMap<Class, Boolean>>
-            CompatibleClassCache = new ConcurrentHashMap<Class, ConcurrentMap<Class, Boolean>>();
+            CompatibleClassCache = new ConcurrentHashMap<>();
 
     /**
      * <pre>
@@ -65,7 +65,7 @@ public final class ClassHelper {
     public static boolean matchCompatible(Class<?> sourcePropClass, Class targetPropClass) {
         ConcurrentMap<Class, Boolean> targetClassMap = CompatibleClassCache.get(targetPropClass);
         if (targetClassMap == null) {
-            targetClassMap = new ConcurrentHashMap<Class, Boolean>();
+            targetClassMap = new ConcurrentHashMap<>();
             CompatibleClassCache.putIfAbsent(targetPropClass, targetClassMap);
             targetClassMap = CompatibleClassCache.get(targetPropClass);
         }
@@ -102,22 +102,52 @@ public final class ClassHelper {
         return compatible;
     }
 
+    /*
+        <targetClass, <methodName, <parameterClass, ParameterizedType>>>
+    */
+    private static ConcurrentMap<Class<?>, ConcurrentMap<String, ConcurrentMap<Class<?>, Holder<ParameterizedType>>>>
+            MethodParameterTypeCache = new ConcurrentHashMap<>();
+
     /**
      * 返回某个属性的方法的反省参数
      * <p>
-     * 属性方法只有一个参数，如方法public void setSkus(List<ItemSkuDo> skus) TODO cache
+     * 属性方法只有一个参数，如方法public void setSkus(List<ItemSkuDo> skus)
      */
     public static ParameterizedType getMethodParameterType(
             Class targetClass, String methodName, Class<?> parameterClass) {
-        Method method = findMethod(targetClass, methodName, parameterClass);
-        if (method != null) {
-            Type[] parameterTypes = method.getGenericParameterTypes();
-            Type type = parameterTypes[0];
-            if (type instanceof ParameterizedType) {
-                return (ParameterizedType) type;
-            }
+        ConcurrentMap<String, ConcurrentMap<Class<?>, Holder<ParameterizedType>>>
+                classMethodTypeMap = MethodParameterTypeCache.get(targetClass);
+        if (classMethodTypeMap == null) {
+            classMethodTypeMap = new ConcurrentHashMap<>();
+            MethodParameterTypeCache.putIfAbsent(targetClass, classMethodTypeMap);
+            classMethodTypeMap = MethodParameterTypeCache.get(targetClass);
         }
-        return null;
+
+        ConcurrentMap<Class<?>, Holder<ParameterizedType>>
+                methodTypeMap = classMethodTypeMap.get(methodName);
+        if (methodTypeMap == null) {
+            methodTypeMap = new ConcurrentHashMap<>();
+            classMethodTypeMap.putIfAbsent(methodName, methodTypeMap);
+            methodTypeMap = classMethodTypeMap.get(methodName);
+        }
+
+        Holder<ParameterizedType> typeHolder = methodTypeMap.get(parameterClass);
+        if (typeHolder == null) {
+            ParameterizedType parameterizedType = null;
+            Method method = findMethod(targetClass, methodName, parameterClass);
+            if (method != null) {
+                Type[] parameterTypes = method.getGenericParameterTypes();
+                Type type = parameterTypes[0];
+                if (type instanceof ParameterizedType) {
+                    parameterizedType = (ParameterizedType) type;
+                }
+            }
+
+            typeHolder = new Holder<>(parameterizedType);
+            methodTypeMap.putIfAbsent(parameterClass, typeHolder);//cache
+        }
+
+        return typeHolder.get();
     }
 
     public static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
@@ -139,7 +169,7 @@ public final class ClassHelper {
      * Cache for {@link Class#getDeclaredMethods()}, allowing for fast resolution.
      */
     private static final ConcurrentMap<Class<?>, Method[]> declaredMethodsCache =
-            new ConcurrentHashMap<Class<?>, Method[]>(256);
+            new ConcurrentHashMap<>(256);
 
     private static Method[] getDeclaredMethods(Class<?> clazz) {
         Method[] result = declaredMethodsCache.get(clazz);
@@ -153,22 +183,21 @@ public final class ClassHelper {
 
     public static Class<?> getCollectionItemClass(Type fieldType) {
         if (fieldType instanceof ParameterizedType) {
-            Class<?> itemClass = null;
             Type actualTypeArgument = ((ParameterizedType) fieldType).getActualTypeArguments()[0];
+            return getWrapClass(actualTypeArgument);
+        }
 
-            if (actualTypeArgument instanceof Class) {
-                itemClass = (Class<?>) actualTypeArgument;
-            } else if (actualTypeArgument instanceof ParameterizedType) {
-                ParameterizedType itemType = (ParameterizedType) actualTypeArgument;
-                itemClass = (Class<?>) itemType.getRawType();//List<X<Y>>, Set<X<Y>>
-            } else if (actualTypeArgument instanceof WildcardType) {
-                WildcardType wildcardType = (WildcardType) actualTypeArgument;
-                Type[] lowerBounds = wildcardType.getLowerBounds();
-                if (lowerBounds.length > 0) {
-                    itemClass = (Class<?>) lowerBounds[0];//List<X extends Y>, List<X super Y>
-                }
-            }
-            return itemClass;
+        return null;
+    }
+
+    public static Class<?> getWrapClass(Type type) {
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType itemType = (ParameterizedType) type;
+            return (Class<?>) itemType.getRawType();//List<X<Y>>, Set<X<Y>>
+        } else if (type instanceof WildcardType) {//List<X extends Y>, List<X super Y> ???
+            return null;
         }
 
         return null;
@@ -190,7 +219,7 @@ public final class ClassHelper {
     }
 
     private static final ConcurrentMap<Class<?>, FastClass>
-            FastClassCache = new ConcurrentHashMap<Class<?>, FastClass>();
+            FastClassCache = new ConcurrentHashMap<>();
 
     //生成类过程比较耗费资源，使用synchronized加锁处理
     private final static Object CreateClassLock = new Object();

@@ -1,6 +1,5 @@
 package com.github.codehorde.common.bean.support;
 
-import com.github.codehorde.common.bean.translate.PropertyTranslator;
 import net.sf.cglib.core.Converter;
 
 /**
@@ -10,13 +9,6 @@ import net.sf.cglib.core.Converter;
  * </pre>
  */
 public class SmartConverter implements Converter {
-    private final Object source;
-    private final Object target;
-
-    public SmartConverter(Object source, Object target) {
-        this.source = source;
-        this.target = target;
-    }
 
     @Override
     public Object convert(Object sourcePropValue, Class targetPropClass, Object context) {
@@ -28,7 +20,7 @@ public class SmartConverter implements Converter {
         if (!ClassHelper.matchCompatible(sourcePropClass, targetPropClass)) {
             PropertyTranslator propertyTranslator = TranslatorRegistry.findPropertyTranslator(targetPropClass);
             if (propertyTranslator != null) {
-                return propertyTranslator.convert(sourcePropValue, targetPropClass, context, source, target);
+                return propertyTranslator.translate(sourcePropValue, targetPropClass, context);
             }
         }
 

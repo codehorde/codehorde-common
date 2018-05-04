@@ -19,7 +19,7 @@ public final class TranslatorRegistry {
         TargetPropertyClass --> PropertyConverter
     */
     private static ConcurrentMap<Class<?>, PropertyTranslator>
-            PropertyTranslatorMap = new ConcurrentHashMap<Class<?>, PropertyTranslator>();
+            PropertyTranslatorMap = new ConcurrentHashMap<>();
 
     static {
         PropertyTranslatorMap.put(String.class, new StringTranslator());
@@ -53,16 +53,16 @@ public final class TranslatorRegistry {
     }
 
     /*
-        targetPropClass --> ValueHolder<PropertyTranslator>
+        targetPropClass --> Holder<PropertyTranslator>
     */
-    private static ConcurrentMap<Class<?>, ValueHolder<PropertyTranslator>>
-            CachePropertyTranslatorMap = new ConcurrentHashMap<Class<?>, ValueHolder<PropertyTranslator>>();
+    private static ConcurrentMap<Class<?>, Holder<PropertyTranslator>>
+            CachePropertyTranslatorMap = new ConcurrentHashMap<>();
 
     /**
      * 根据目标的属性类型获取对象的转换器
      */
     public static PropertyTranslator findPropertyTranslator(Class targetPropClass) {
-        ValueHolder<PropertyTranslator> holder
+        Holder<PropertyTranslator> holder
                 = CachePropertyTranslatorMap.get(targetPropClass);
 
         if (holder != null) {
@@ -93,7 +93,7 @@ public final class TranslatorRegistry {
         if (translator == null) {
             translator = TranslatorRegistry.mapPropertyTranslator(Object.class);
         }
-        holder = new ValueHolder<PropertyTranslator>(translator);
+        holder = new Holder<>(translator);
         CachePropertyTranslatorMap.putIfAbsent(targetPropClass, holder);
 
         return translator;

@@ -1,9 +1,9 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierUtils;
+import com.github.codehorde.common.bean.BeanCopierHelper;
 import com.github.codehorde.common.bean.support.ClassHelper;
+import com.github.codehorde.common.bean.support.PropertyTranslator;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,38 +14,25 @@ import java.util.List;
 public class ListTranslator implements PropertyTranslator<List<?>> {
 
     @Override
-    public List<?> convert(Object sourcePropValue, Class targetPropClass,
-                           Object context, Object sourceObject, Object targetObject) {
-
+    public List<?> translate(Object sourcePropValue, Type targetPropType, Object context) {
         if (sourcePropValue instanceof List) {
             List<?> sourceList = (List<?>) sourcePropValue;
-            Class<?> componentType = null;
+            Class<?> componentClass = ClassHelper.getCollectionItemClass(targetPropType);
 
-            ParameterizedType parameterizedType = ClassHelper.getMethodParameterType(
-                    targetObject.getClass(), (String) context, targetPropClass);
-            if (parameterizedType != null) {
-                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-                if (typeArguments.length > 0) {
-                    Type type = typeArguments[0];
-                    //noinspection ConstantConditions
-                    componentType = type instanceof Class ? (Class<?>) type : null;
-                }
-            }
             ArrayList retList = new ArrayList();
             //noinspection Duplicates
             for (Object source : sourceList) {
-                if (componentType == null) {
-                    componentType = source.getClass();
+                if (componentClass == null) {
+                    componentClass = source.getClass();
                 }
-                Object to;
-                if (ClassHelper.isBasicClass(componentType)) {
-                    to = source;
+                Object target;
+                if (ClassHelper.isBasicClass(componentClass)) {
+                    target = source;
                 } else {
-                    to = ClassHelper.instantiate(componentType);
-                    BeanCopierUtils.adaptMapping(source, to);
+                    target = BeanCopierHelper.createBean(source, componentClass);
                 }
                 //noinspection unchecked
-                retList.add(to);
+                retList.add(target);
             }
             return retList;
         }
@@ -55,6 +42,6 @@ public class ListTranslator implements PropertyTranslator<List<?>> {
         */
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
+                + ": Error in translate [" + sourcePropValue + "] to " + targetPropType.toString());
     }
 }

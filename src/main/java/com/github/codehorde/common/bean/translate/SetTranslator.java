@@ -1,9 +1,9 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierUtils;
+import com.github.codehorde.common.bean.BeanCopierHelper;
 import com.github.codehorde.common.bean.support.ClassHelper;
+import com.github.codehorde.common.bean.support.PropertyTranslator;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,37 +14,25 @@ import java.util.Set;
 public class SetTranslator implements PropertyTranslator<Set<?>> {
 
     @Override
-    public Set<?> convert(Object sourcePropValue, Class targetPropClass,
-                          Object context, Object sourceObject, Object targetObject) {
-
+    public Set<?> translate(Object sourcePropValue, Type targetPropType, Object context) {
         if (sourcePropValue instanceof Set) {
             Set<?> sourceList = (Set<?>) sourcePropValue;
-            Class<?> componentType = null;
-
-            ParameterizedType parameterizedType = ClassHelper.getMethodParameterType(
-                    targetObject.getClass(), (String) context, targetPropClass);
-            if (parameterizedType != null) {
-                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-                Type type = typeArguments[0];
-                //noinspection ConstantConditions
-                componentType = type instanceof Class ? (Class<?>) type : null;
-            }
+            Class<?> componentClass = ClassHelper.getCollectionItemClass(targetPropType);
 
             HashSet retSet = new HashSet();
             //noinspection Duplicates
             for (Object source : sourceList) {
-                if (componentType == null) {
-                    componentType = source.getClass();
+                if (componentClass == null) {
+                    componentClass = source.getClass();
                 }
-                Object to;
-                if (ClassHelper.isBasicClass(componentType)) {
-                    to = source;
+                Object target;
+                if (ClassHelper.isBasicClass(componentClass)) {
+                    target = source;
                 } else {
-                    to = ClassHelper.instantiate(componentType);
-                    BeanCopierUtils.adaptMapping(source, to);
+                    target = BeanCopierHelper.createBean(source, componentClass);
                 }
                 //noinspection unchecked
-                retSet.add(to);
+                retSet.add(target);
             }
             return retSet;
         }
@@ -54,6 +42,6 @@ public class SetTranslator implements PropertyTranslator<Set<?>> {
         */
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
+                + ": Error in translate [" + sourcePropValue + "] to " + targetPropType.toString());
     }
 }

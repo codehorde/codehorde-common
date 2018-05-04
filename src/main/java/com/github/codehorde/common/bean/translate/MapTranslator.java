@@ -1,7 +1,8 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierUtils;
+import com.github.codehorde.common.bean.BeanCopierHelper;
 import com.github.codehorde.common.bean.support.ClassHelper;
+import com.github.codehorde.common.bean.support.PropertyTranslator;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -14,27 +15,23 @@ import java.util.Map;
 public class MapTranslator implements PropertyTranslator<Map<?, ?>> {
 
     @Override
-    public Map<?, ?> convert(Object sourcePropValue, Class targetPropClass,
-                             Object context, Object sourceObject, Object targetObject) {
-
+    public Map<?, ?> translate(Object sourcePropValue, Type targetPropType, Object context) {
         if (sourcePropValue instanceof Map) {
             Map<?, ?> sourceMap = (Map<?, ?>) sourcePropValue;
-            Class<?> keyType = null;
-            Class<?> valueType = null;
+            Class<?> keyClass = null;
+            Class<?> valueClass = null;
 
-            ParameterizedType parameterizedType = ClassHelper.getMethodParameterType(
-                    targetObject.getClass(), (String) context, targetPropClass);
-            if (parameterizedType != null) {
+
+            if (targetPropType instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) targetPropType;
                 Type[] typeArguments = parameterizedType.getActualTypeArguments();
                 if (typeArguments.length > 0) {
-                    Type type = typeArguments[0];
-                    //noinspection ConstantConditions
-                    keyType = type instanceof Class ? (Class<?>) type : null;
+                    Type keyType = typeArguments[0];
+                    keyClass = ClassHelper.getWrapClass(keyType);
                 }
-                if (typeArguments.length > 0) {
-                    Type type = typeArguments[1];
-                    //noinspection ConstantConditions
-                    valueType = type instanceof Class ? (Class<?>) type : null;
+                if (typeArguments.length > 1) {
+                    Type valueType = typeArguments[1];
+                    valueClass = ClassHelper.getWrapClass(valueType);
                 }
             }
 
@@ -42,25 +39,23 @@ public class MapTranslator implements PropertyTranslator<Map<?, ?>> {
             for (Map.Entry<?, ?> entry : sourceMap.entrySet()) {
                 Object sourceKey = entry.getKey();
                 Object sourceValue = entry.getValue();
-                if (keyType == null) {
-                    keyType = sourceKey.getClass();
+                if (keyClass == null) {
+                    keyClass = sourceKey.getClass();
                 }
-                if (valueType == null) {
-                    valueType = sourceValue.getClass();
+                if (valueClass == null) {
+                    valueClass = sourceValue.getClass();
                 }
                 Object targetKey;
-                if (ClassHelper.isBasicClass(keyType)) {
+                if (ClassHelper.isBasicClass(keyClass)) {
                     targetKey = sourceKey;
                 } else {
-                    targetKey = ClassHelper.instantiate(keyType);
-                    BeanCopierUtils.adaptMapping(sourceKey, targetKey);
+                    targetKey = BeanCopierHelper.createBean(sourceKey, keyClass);
                 }
                 Object targetValue;
-                if (ClassHelper.isBasicClass(valueType)) {
+                if (ClassHelper.isBasicClass(valueClass)) {
                     targetValue = sourceValue;
                 } else {
-                    targetValue = ClassHelper.instantiate(valueType);
-                    BeanCopierUtils.adaptMapping(sourceValue, sourceValue);
+                    targetValue = BeanCopierHelper.createBean(sourceValue, valueClass);
                 }
                 //noinspection unchecked
                 retMap.put(targetKey, targetValue);
@@ -69,6 +64,6 @@ public class MapTranslator implements PropertyTranslator<Map<?, ?>> {
         }
 
         throw new IllegalArgumentException(getClass().getSimpleName()
-                + ": Error in convert [" + sourcePropValue + "] to " + targetPropClass.getName());
+                + ": Error in translate [" + sourcePropValue + "] to " + targetPropType.toString());
     }
 }
