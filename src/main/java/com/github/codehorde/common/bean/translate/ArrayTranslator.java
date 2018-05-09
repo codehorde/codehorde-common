@@ -22,7 +22,7 @@ public class ArrayTranslator implements PropertyTranslator<Object> {
             Object retArray = Array.newInstance(componentType, len);
             for (int index = 0; index < len; index++) {
                 Object source = Array.get(sourcePropValue, index);
-                Object target = BeanCopierHelper.deepClone(source, componentType);
+                Object target = BeanCopierHelper.deepCopy(source, componentType);
                 Array.set(retArray, index, target);
             }
             return retArray;

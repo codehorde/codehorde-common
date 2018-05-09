@@ -59,13 +59,13 @@ public final class BeanCopierHelper {
      *     目标对象使用强制转换的结果，可能会报转换异常错误（ClassCastException）
      * </pre>
      */
-    public static <T> T deepClone(Object source, Class<T> targetClass) {
+    public static <T> T deepCopy(Object source, Class<T> targetClass) {
         T target = ClassHelper.instantiate(targetClass);
-        deepClone(source, target);
+        deepCopy(source, target);
         return target;
     }
 
-    public static void deepClone(Object source, Object target) {
+    public static void deepCopy(Object source, Object target) {
         BeanCopier copier = findCopier(source.getClass(), target.getClass(), true);
         copier.copy(source, target, new CompatibleConverter(target.getClass()));
     }

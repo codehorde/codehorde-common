@@ -21,7 +21,7 @@ public class BeanTranslator implements PropertyTranslator<Object> {
         }
         
         Object target = ClassHelper.instantiate(targetClass);
-        BeanCopierHelper.deepClone(sourcePropValue, target);
+        BeanCopierHelper.deepCopy(sourcePropValue, target);
         return target;
     }
 }

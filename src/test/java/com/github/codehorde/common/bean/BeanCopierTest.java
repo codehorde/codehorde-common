@@ -69,7 +69,7 @@ public class BeanCopierTest {
         map.put(key, valueList);
         commentVo.setMap(map);
 
-        Object retVal = com.github.codehorde.common.bean.BeanCopierHelper.deepClone(commentVo, PostOrderCommentDto.class);
+        Object retVal = com.github.codehorde.common.bean.BeanCopierHelper.deepCopy(commentVo, PostOrderCommentDto.class);
 
         System.out.println(retVal);
     }
