@@ -37,6 +37,8 @@ public final class TranslatorRegistry {
         PropertyTranslatorMap.put(Long.class, new LongTranslator());
         PropertyTranslatorMap.put(short.class, new ShortTranslator());
         PropertyTranslatorMap.put(Short.class, new ShortTranslator());
+        PropertyTranslatorMap.put(boolean.class, new BooleanTranslator());
+        PropertyTranslatorMap.put(Boolean.class, new BooleanTranslator());
         //
         PropertyTranslatorMap.put(Enum.class, new EnumTranslator());
         //
@@ -63,7 +65,7 @@ public final class TranslatorRegistry {
      */
     public static PropertyTranslator findPropertyTranslator(Class targetPropClass) {
         if (targetPropClass == null) {
-           return TranslatorRegistry.mapPropertyTranslator(Object.class);
+            return TranslatorRegistry.mapPropertyTranslator(Object.class);
         }
 
         Holder<PropertyTranslator> holder = CachePropertyTranslatorMap.get(targetPropClass);
