@@ -34,7 +34,7 @@ public final class ClassHelper {
         return PrimaryWrapTypeMap.get(primaryClass);
     }
 
-    private static final CopyOnWriteArraySet<Class<?>>
+    private static final CopyOnWriteArraySet<Type>
             BasicClasses = new CopyOnWriteArraySet<>();
 
     static {
@@ -45,60 +45,8 @@ public final class ClassHelper {
         );
     }
 
-    public static boolean isBasicClass(Class<?> clazz) {
-        return BasicClasses.contains(clazz);
-    }
-
-    /*
-        targetPropClass --> Map<sourcePropClass, Boolean>
-    */
-    private static ConcurrentMap<Class, ConcurrentMap<Class, Boolean>>
-            CompatibleClassCache = new ConcurrentHashMap<>();
-
-    /**
-     * <pre>
-     *      复制源和目标类类型是否兼容，如果兼容直接使用目标的属性值
-     *      满足兼容条件通常：源属性类型需要为基础类型（如int, double）或者基础支持类型（如String, Date, Long）
-     * </pre>
-     */
-    public static boolean matchCompatible(Class<?> sourcePropClass, Class targetPropClass) {
-        ConcurrentMap<Class, Boolean> targetClassMap = CompatibleClassCache.get(targetPropClass);
-        if (targetClassMap == null) {
-            targetClassMap = new ConcurrentHashMap<>();
-            CompatibleClassCache.putIfAbsent(targetPropClass, targetClassMap);
-            targetClassMap = CompatibleClassCache.get(targetPropClass);
-        }
-        Boolean compatible = targetClassMap.get(sourcePropClass);
-
-        if (compatible == null) {//缓存不存在
-                /*
-                    1、如果targetPropClass为基础类型，如int：setXxx(int xxx)
-                    当源对象属性 Xxx getXxx()
-                       -- Xxx为基础类型的包装类型Integer时，则两者类型兼容
-                       -- Xxx不是基础类型的包装类型Integer时，如Xxx.class -> Long，则两者类型不兼容，需要经过IntegerTranslator
-                */
-            if (targetPropClass.isPrimitive()) {
-                compatible = ClassHelper.mapWrappedClass(targetPropClass) == targetPropClass;
-            }
-                /*
-                    2、如果源属性类型sourcePropClass为不可变类型，sourcePropClass是targetPropClass的一个子类，返回兼容
-                     -- 如源属性Long getXxx()，目标属性 setXxx(Long xxx)，直接使用源属性的值
-                         目标属性 setXxx(Long xxx)，直接使用源属性的值
-                */
-            else if (ClassHelper.isBasicClass(sourcePropClass)) {
-                //noinspection unchecked
-                compatible = targetPropClass.isAssignableFrom(sourcePropClass);
-            } else {
-                /*
-                    3、其他情况不兼容
-                */
-                compatible = false;
-            }
-
-            targetClassMap.putIfAbsent(sourcePropClass, compatible);
-        }
-
-        return compatible;
+    public static boolean isBasicClass(Type type) {
+        return BasicClasses.contains(type);
     }
 
     /*
@@ -180,10 +128,9 @@ public final class ClassHelper {
         return result;
     }
 
-    public static Class<?> getCollectionItemClass(Type fieldType) {
+    public static Type getCollectionItemType(Type fieldType) {
         if (fieldType instanceof ParameterizedType) {
-            Type actualTypeArgument = ((ParameterizedType) fieldType).getActualTypeArguments()[0];
-            return getWrapClass(actualTypeArgument);
+            return ((ParameterizedType) fieldType).getActualTypeArguments()[0];
         }
 
         return null;
@@ -195,10 +142,12 @@ public final class ClassHelper {
         } else if (type instanceof ParameterizedType) {
             ParameterizedType itemType = (ParameterizedType) type;
             return (Class<?>) itemType.getRawType();//List<X<Y>>, Set<X<Y>>
-        } else if (type instanceof WildcardType) {//List<X extends Y>, List<X super Y> ???
+        }
+        /*
+        else if (type instanceof WildcardType) {//List<X extends Y>, List<X super Y> ???
             return null;
         }
-
+        */
         return null;
     }
 
@@ -206,23 +155,51 @@ public final class ClassHelper {
      * 留意这里返回的对象不是反射调用构造方法创建出来的（Cglib FastClass）
      */
     public static <T> T instantiate(Class<?> clazz) {
-        if (List.class.isAssignableFrom(clazz)) {
-            return (T) new ArrayList<>();
-        } else if (Set.class.isAssignableFrom(clazz)) {
-            return (T) new HashSet<>();
-        } else if (Map.class.isAssignableFrom(clazz)) {
-            return (T) new HashMap<>();
+        Boolean support = supportInstantiateCache.get(clazz);
+        if (support == null) {
+            support = hasParameterlessPublicConstructor(clazz);
+            supportInstantiateCache.putIfAbsent(clazz, support);
+            support = supportInstantiateCache.get(clazz);
         }
 
-        FastClass fastClass = getFastClass(clazz);
+        if (support) {
+            FastClass fastClass = getFastClass(clazz);
 
-        try {
-            //noinspection unchecked
-            return (T) fastClass.newInstance();
-        } catch (InvocationTargetException ex) {
-            throw new UnsupportedOperationException(
-                    "create class [" + clazz + "] instance error! ", ex);
+            try {
+                //noinspection unchecked
+                return (T) fastClass.newInstance();
+            } catch (InvocationTargetException ex) {
+                throw new UnsupportedOperationException(
+                        "create class [" + clazz + "] instance error! ", ex);
+            }
+        } else {
+            if (List.class.isAssignableFrom(clazz)) {
+                //noinspection unchecked
+                return (T) new ArrayList();
+            } else if (Set.class.isAssignableFrom(clazz)) {
+                //noinspection unchecked
+                return (T) new HashSet();
+            } else if (Map.class.isAssignableFrom(clazz)) {
+                //noinspection unchecked
+                return (T) new HashMap();
+            }
         }
+
+        throw new UnsupportedOperationException(
+                "create class [" + clazz + "] instance error! ");
+    }
+
+    private static final ConcurrentMap<Class<?>, Boolean> supportInstantiateCache =
+            new ConcurrentHashMap<>(256);
+
+    private static boolean hasParameterlessPublicConstructor(Class<?> clazz) {
+        for (Constructor<?> constructor : clazz.getConstructors()) {
+            // In Java 7-, use getParameterTypes and check the length of the array returned
+            if (constructor.getParameterTypes().length == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static final ConcurrentMap<Class<?>, FastClass>

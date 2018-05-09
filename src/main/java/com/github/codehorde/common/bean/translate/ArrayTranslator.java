@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 public class ArrayTranslator implements PropertyTranslator<Object> {
 
     @Override
-    public Object translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Object translate(Object sourcePropValue, Type targetPropType) {
         Class<?> sourcePropClass = sourcePropValue.getClass();
 
         if (sourcePropClass.isArray()) {

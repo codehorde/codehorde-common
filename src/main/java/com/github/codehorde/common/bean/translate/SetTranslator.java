@@ -5,7 +5,6 @@ import com.github.codehorde.common.bean.support.ClassHelper;
 import com.github.codehorde.common.bean.support.PropertyTranslator;
 
 import java.lang.reflect.Type;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,23 +13,15 @@ import java.util.Set;
 public class SetTranslator implements PropertyTranslator<Set<?>> {
 
     @Override
-    public Set<?> translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Set<?> translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof Set) {
-            Set<?> sourceList = (Set<?>) sourcePropValue;
-            Class<?> componentClass = ClassHelper.getCollectionItemClass(targetPropType);
+            Set<?> sourceSet = (Set<?>) sourcePropValue;
+            Type componentType = ClassHelper.getCollectionItemType(targetPropType);
 
-            HashSet retSet = new HashSet();
+            Set retSet = ClassHelper.instantiate(sourcePropValue.getClass());
             //noinspection Duplicates
-            for (Object source : sourceList) {
-                if (componentClass == null) {
-                    componentClass = source.getClass();
-                }
-                Object target;
-                if (ClassHelper.isBasicClass(componentClass)) {
-                    target = source;
-                } else {
-                    target = BeanCopierHelper.deepClone(source, componentClass);
-                }
+            for (Object source : sourceSet) {
+                Object target = BeanCopierHelper.mapProperty(source, componentType);
                 //noinspection unchecked
                 retSet.add(target);
             }

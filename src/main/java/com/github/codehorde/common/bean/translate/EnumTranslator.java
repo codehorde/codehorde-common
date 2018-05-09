@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class EnumTranslator implements PropertyTranslator<Enum<?>> {
 
     @Override
-    public Enum<?> translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Enum<?> translate(Object sourcePropValue, Type targetPropType) {
         Class targetPropClass = (Class) targetPropType;
         if (sourcePropValue instanceof String) {
             return Enum.valueOf(targetPropClass, (String) sourcePropValue);

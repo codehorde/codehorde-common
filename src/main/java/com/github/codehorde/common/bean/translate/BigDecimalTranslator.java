@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class BigDecimalTranslator implements PropertyTranslator<BigDecimal> {
 
     @Override
-    public BigDecimal translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public BigDecimal translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return new BigDecimal((String) sourcePropValue);
         }

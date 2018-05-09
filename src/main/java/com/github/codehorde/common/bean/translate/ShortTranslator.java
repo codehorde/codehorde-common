@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class ShortTranslator implements PropertyTranslator<Short> {
 
     @Override
-    public Short translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Short translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return Short.parseShort((String) sourcePropValue);
         }

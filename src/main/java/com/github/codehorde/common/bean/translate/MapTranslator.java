@@ -15,48 +15,30 @@ import java.util.Map;
 public class MapTranslator implements PropertyTranslator<Map<?, ?>> {
 
     @Override
-    public Map<?, ?> translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Map<?, ?> translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof Map) {
             Map<?, ?> sourceMap = (Map<?, ?>) sourcePropValue;
-            Class<?> keyClass = null;
-            Class<?> valueClass = null;
+            Type keyType = null;
+            Type valueType = null;
 
 
             if (targetPropType instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) targetPropType;
                 Type[] typeArguments = parameterizedType.getActualTypeArguments();
                 if (typeArguments.length > 0) {
-                    Type keyType = typeArguments[0];
-                    keyClass = ClassHelper.getWrapClass(keyType);
+                    keyType = typeArguments[0];
                 }
                 if (typeArguments.length > 1) {
-                    Type valueType = typeArguments[1];
-                    valueClass = ClassHelper.getWrapClass(valueType);
+                    valueType = typeArguments[1];
                 }
             }
 
-            HashMap retMap = new HashMap();
+            HashMap retMap = ClassHelper.instantiate(sourcePropValue.getClass());
             for (Map.Entry<?, ?> entry : sourceMap.entrySet()) {
                 Object sourceKey = entry.getKey();
+                Object targetKey = BeanCopierHelper.mapProperty(sourceKey, keyType);
                 Object sourceValue = entry.getValue();
-                if (keyClass == null) {
-                    keyClass = sourceKey.getClass();
-                }
-                if (valueClass == null) {
-                    valueClass = sourceValue.getClass();
-                }
-                Object targetKey;
-                if (ClassHelper.isBasicClass(keyClass)) {
-                    targetKey = sourceKey;
-                } else {
-                    targetKey = BeanCopierHelper.deepClone(sourceKey, keyClass);
-                }
-                Object targetValue;
-                if (ClassHelper.isBasicClass(valueClass)) {
-                    targetValue = sourceValue;
-                } else {
-                    targetValue = BeanCopierHelper.deepClone(sourceValue, valueClass);
-                }
+                Object targetValue = BeanCopierHelper.mapProperty(sourceValue, valueType);
                 //noinspection unchecked
                 retMap.put(targetKey, targetValue);
             }

@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class DoubleTranslator implements PropertyTranslator<Double> {
 
     @Override
-    public Double translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Double translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return Double.parseDouble((String) sourcePropValue);
         }

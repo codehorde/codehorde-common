@@ -5,7 +5,6 @@ import com.github.codehorde.common.bean.support.ClassHelper;
 import com.github.codehorde.common.bean.support.PropertyTranslator;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,23 +13,15 @@ import java.util.List;
 public class ListTranslator implements PropertyTranslator<List<?>> {
 
     @Override
-    public List<?> translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public List<?> translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof List) {
             List<?> sourceList = (List<?>) sourcePropValue;
-            Class<?> componentClass = ClassHelper.getCollectionItemClass(targetPropType);
+            Type componentType = ClassHelper.getCollectionItemType(targetPropType);
 
-            ArrayList retList = new ArrayList();
+            List retList = ClassHelper.instantiate(sourcePropValue.getClass());
             //noinspection Duplicates
             for (Object source : sourceList) {
-                if (componentClass == null) {
-                    componentClass = source.getClass();
-                }
-                Object target;
-                if (ClassHelper.isBasicClass(componentClass)) {
-                    target = source;
-                } else {
-                    target = BeanCopierHelper.deepClone(source, componentClass);
-                }
+                Object target = BeanCopierHelper.mapProperty(source, componentType);
                 //noinspection unchecked
                 retList.add(target);
             }

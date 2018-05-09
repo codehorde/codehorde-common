@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class ByteTranslator implements PropertyTranslator<Byte> {
 
     @Override
-    public Byte translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Byte translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return Byte.parseByte((String) sourcePropValue);
         }

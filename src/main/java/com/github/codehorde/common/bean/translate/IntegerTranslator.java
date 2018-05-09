@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class IntegerTranslator implements PropertyTranslator<Integer> {
 
     @Override
-    public Integer translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Integer translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return Integer.parseInt((String) sourcePropValue);
         }

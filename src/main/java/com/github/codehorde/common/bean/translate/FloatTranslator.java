@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class FloatTranslator implements PropertyTranslator<Float> {
 
     @Override
-    public Float translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Float translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return Float.parseFloat((String) sourcePropValue);
         }

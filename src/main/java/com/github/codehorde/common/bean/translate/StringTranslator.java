@@ -10,16 +10,20 @@ import java.lang.reflect.Type;
 public class StringTranslator implements PropertyTranslator<String> {
 
     @Override
-    public String translate(Object sourcePropValue, Type targetPropType, Object context) {
-        if (String.class != sourcePropValue.getClass()) {
-            if (sourcePropValue instanceof Enum) {
-                return ((Enum) sourcePropValue).name();
-            } else {
-                return String.valueOf(sourcePropValue);
-            }
+    public String translate(Object sourcePropValue, Type targetPropType) {
+        if (sourcePropValue instanceof String) {
+            return String.valueOf(sourcePropValue);
         }
 
+        if (sourcePropValue instanceof Enum) {
+            return ((Enum) sourcePropValue).name();
+        }
+
+        return sourcePropValue.toString();
+
+        /*
         throw new IllegalArgumentException(getClass().getSimpleName()
                 + ": Error in translate [" + sourcePropValue + "] to " + targetPropType.toString());
+                */
     }
 }

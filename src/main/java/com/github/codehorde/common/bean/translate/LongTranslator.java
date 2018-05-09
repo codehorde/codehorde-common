@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class LongTranslator implements PropertyTranslator<Long> {
 
     @Override
-    public Long translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public Long translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return Long.parseLong((String) sourcePropValue);
         }

@@ -93,6 +93,7 @@ public final class TranslatorRegistry {
         if (translator == null) {
             translator = TranslatorRegistry.mapPropertyTranslator(Object.class);
         }
+        
         holder = new Holder<>(translator);
         CachePropertyTranslatorMap.putIfAbsent(targetPropClass, holder);
 

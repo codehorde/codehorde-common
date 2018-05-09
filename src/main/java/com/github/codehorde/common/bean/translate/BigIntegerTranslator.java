@@ -11,7 +11,7 @@ import java.math.BigInteger;
 public class BigIntegerTranslator implements PropertyTranslator<BigInteger> {
 
     @Override
-    public BigInteger translate(Object sourcePropValue, Type targetPropType, Object context) {
+    public BigInteger translate(Object sourcePropValue, Type targetPropType) {
         if (sourcePropValue instanceof String) {
             return new BigInteger((String) sourcePropValue);
         }

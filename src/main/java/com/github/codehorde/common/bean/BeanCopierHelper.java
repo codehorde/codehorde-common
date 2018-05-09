@@ -1,8 +1,6 @@
 package com.github.codehorde.common.bean;
 
-import com.github.codehorde.common.bean.support.ClassHelper;
-import com.github.codehorde.common.bean.support.DirectConverter;
-import com.github.codehorde.common.bean.support.SmartConverter;
+import com.github.codehorde.common.bean.support.*;
 import net.sf.cglib.beans.BeanCopier;
 
 import java.lang.reflect.Type;
@@ -50,8 +48,6 @@ public final class BeanCopierHelper {
         return target;
     }
 
-    public static ThreadLocal<Type> Type = new ThreadLocal<>();
-
     /**
      * <pre>
      * 如果源属性和目标属性名称相同但类型不同，尝试从支持的转换器中转换，参见PropertyTranslator
@@ -71,7 +67,18 @@ public final class BeanCopierHelper {
 
     public static void deepClone(Object source, Object target) {
         BeanCopier copier = findCopier(source.getClass(), target.getClass(), true);
-        copier.copy(source, target, new SmartConverter(target.getClass()));
+        copier.copy(source, target, new CompatibleConverter(target.getClass()));
+    }
+
+    public static Object mapProperty(Object value, Type type) {
+        if (type == null) {
+            return null;
+        } else if (ClassHelper.isBasicClass(type)) {
+            return value;
+        } else {
+            PropertyTranslator translator = TranslatorRegistry.findPropertyTranslator(ClassHelper.getWrapClass(type));
+            return translator.translate(value, type);
+        }
     }
 
     /*
