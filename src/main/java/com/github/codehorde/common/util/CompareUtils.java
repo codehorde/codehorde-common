@@ -1,4 +1,4 @@
-package com.github.codehorde.common.tool;
+package com.github.codehorde.common.util;
 
 /**
  * Created by baomingfeng at 2017-09-12 14:56:55

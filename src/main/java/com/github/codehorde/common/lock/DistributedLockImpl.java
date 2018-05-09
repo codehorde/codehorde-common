@@ -1,7 +1,7 @@
 package com.github.codehorde.common.lock;
 
-import com.github.codehorde.common.tool.CompareUtils;
-import com.github.codehorde.common.tool.ZooKeeperUtils;
+import com.github.codehorde.common.util.CompareUtils;
+import com.github.codehorde.common.util.ZooKeeperUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;

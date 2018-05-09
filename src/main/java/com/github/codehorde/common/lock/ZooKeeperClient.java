@@ -1,8 +1,8 @@
 package com.github.codehorde.common.lock;
 
-import com.github.codehorde.common.tool.CompareUtils;
+import com.github.codehorde.common.util.CompareUtils;
 import com.github.codehorde.common.ops.Command;
-import com.github.codehorde.common.tool.ZooKeeperUtils;
+import com.github.codehorde.common.util.ZooKeeperUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.*;
 import com.google.common.collect.ImmutableSet;

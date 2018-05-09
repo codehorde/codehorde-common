@@ -1,6 +1,6 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierHelper;
+import com.github.codehorde.common.bean.BeanMapper;
 import com.github.codehorde.common.bean.support.PropertyTranslator;
 
 import java.lang.reflect.Array;
@@ -22,7 +22,7 @@ public class ArrayTranslator implements PropertyTranslator<Object> {
             Object retArray = Array.newInstance(componentType, len);
             for (int index = 0; index < len; index++) {
                 Object source = Array.get(sourcePropValue, index);
-                Object target = BeanCopierHelper.deepCopyFrom(source, componentType);
+                Object target = BeanMapper.deepCopyFrom(source, componentType);
                 Array.set(retArray, index, target);
             }
             return retArray;

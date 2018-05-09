@@ -12,9 +12,9 @@ import java.util.concurrent.ConcurrentMap;
  * <p>
  * Created by baomingfeng at 2018-04-28 11:04:59
  */
-public final class BeanCopierHelper {
+public final class BeanMapper {
 
-    private BeanCopierHelper() {
+    private BeanMapper() {
     }
 
     /**

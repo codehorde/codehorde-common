@@ -1,4 +1,4 @@
-package com.github.codehorde.common.tool;
+package com.github.codehorde.common.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

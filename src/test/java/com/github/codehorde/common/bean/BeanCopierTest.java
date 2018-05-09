@@ -75,7 +75,7 @@ public class BeanCopierTest {
         map.put(key, valueList);
         commentVo.setMap(map);
 
-        Object retVal = BeanCopierHelper.deepCopyFrom(commentVo, PostOrderCommentDto.class);
+        Object retVal = BeanMapper.deepCopyFrom(commentVo, PostOrderCommentDto.class);
 
         System.out.println(retVal);
     }
@@ -101,7 +101,7 @@ public class BeanCopierTest {
         postTradeCommentVoPageResult.setTotal(703L);
         postTradeCommentVoPageResult.setData(valueList);
         PageResult<PostTradeCommentDto> postTradeCommentDtoPageResult
-                = BeanCopierHelper.deepCopyFrom(postTradeCommentVoPageResult, new TypeRef<PageResult<PostTradeCommentDto>>() {
+                = BeanMapper.deepCopyFrom(postTradeCommentVoPageResult, new TypeRef<PageResult<PostTradeCommentDto>>() {
         });
 
         System.out.println(postTradeCommentDtoPageResult);

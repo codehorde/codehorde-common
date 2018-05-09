@@ -1,6 +1,6 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierHelper;
+import com.github.codehorde.common.bean.BeanMapper;
 import com.github.codehorde.common.bean.support.ClassHelper;
 import com.github.codehorde.common.bean.support.PropertyTranslator;
 
@@ -20,7 +20,7 @@ public class ListTranslator implements PropertyTranslator<List<?>> {
 
             List retList = ClassHelper.instantiate(sourcePropValue.getClass());
             for (Object source : sourceList) {
-                Object target = BeanCopierHelper.deepCopyFrom(source, componentType);
+                Object target = BeanMapper.deepCopyFrom(source, componentType);
                 //noinspection unchecked
                 retList.add(target);
             }

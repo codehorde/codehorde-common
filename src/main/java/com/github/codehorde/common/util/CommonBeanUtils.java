@@ -1,4 +1,4 @@
-package com.github.codehorde.common.bean;
+package com.github.codehorde.common.util;
 
 import org.apache.commons.beanutils.BeanUtilsBean;
 

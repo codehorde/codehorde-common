@@ -38,24 +38,24 @@ public class BeanMapperUtilsTest {
         aaa.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb1 = new BBB();
-        BeanCopierHelper.simpleCopy(aaa, bbb1);
+        BeanMapper.simpleCopy(aaa, bbb1);
         System.out.println(bbb1);
 
         BBB bbb2 = new BBB();
-        BeanCopierHelper.deepCopyFrom(aaa, BBB.class);
+        BeanMapper.deepCopyFrom(aaa, BBB.class);
         System.out.println(bbb2);
 
         BBB bbb3 = new BBB();
-        BeanCopierHelper.deepCopyFrom(aaa, BBB.class);
+        BeanMapper.deepCopyFrom(aaa, BBB.class);
         System.out.println(bbb3);
 
         BBB bbb4 = new BBB();
-        BeanCopierHelper.deepCopyFrom(aaa, BBB.class);
+        BeanMapper.deepCopyFrom(aaa, BBB.class);
         System.out.println(bbb4);
 
         //StringDecimal会报错
         BBB bbbx = new BBB();
-        BeanCopierHelper.directCopy(aaa, bbbx);
+        BeanMapper.directCopy(aaa, bbbx);
         System.out.println(bbbx);
     }
 
@@ -78,7 +78,7 @@ public class BeanMapperUtilsTest {
         aaa.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb = new BBB();
-        BeanCopierHelper.deepCopyFrom(aaa, BBB.class);
+        BeanMapper.deepCopyFrom(aaa, BBB.class);
         System.out.println(bbb);
     }
 
@@ -101,7 +101,7 @@ public class BeanMapperUtilsTest {
         ccc.setTimeUnit(TimeUnit.HOURS);
 
         BBB bbb = new BBB();
-        BeanCopierHelper.deepCopyFrom(ccc, BBB.class);
+        BeanMapper.deepCopyFrom(ccc, BBB.class);
         System.out.println(bbb);
     }
 }

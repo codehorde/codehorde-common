@@ -1,4 +1,4 @@
-package com.github.codehorde.common.tool;
+package com.github.codehorde.common.util;
 
 import com.github.codehorde.common.lock.ZooKeeperClient;
 import com.google.common.base.Preconditions;

@@ -1,6 +1,6 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierHelper;
+import com.github.codehorde.common.bean.BeanMapper;
 import com.github.codehorde.common.bean.support.ClassHelper;
 import com.github.codehorde.common.bean.support.PropertyTranslator;
 
@@ -35,8 +35,8 @@ public class MapTranslator implements PropertyTranslator<Map<?, ?>> {
 
             HashMap retMap = ClassHelper.instantiate(sourcePropValue.getClass());
             for (Map.Entry<?, ?> entry : sourceMap.entrySet()) {
-                Object targetKey = BeanCopierHelper.deepCopyFrom(entry.getKey(), keyType);
-                Object targetValue = BeanCopierHelper.deepCopyFrom(entry.getValue(), valueType);
+                Object targetKey = BeanMapper.deepCopyFrom(entry.getKey(), keyType);
+                Object targetValue = BeanMapper.deepCopyFrom(entry.getValue(), valueType);
                 //noinspection unchecked
                 retMap.put(targetKey, targetValue);
             }

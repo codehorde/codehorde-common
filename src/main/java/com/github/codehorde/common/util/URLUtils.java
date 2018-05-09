@@ -1,4 +1,4 @@
-package com.github.codehorde.common.tool;
+package com.github.codehorde.common.util;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,6 +1,6 @@
 package com.github.codehorde.common.bean.translate;
 
-import com.github.codehorde.common.bean.BeanCopierHelper;
+import com.github.codehorde.common.bean.BeanMapper;
 import com.github.codehorde.common.bean.support.ClassHelper;
 import com.github.codehorde.common.bean.support.PropertyTranslator;
 
@@ -22,7 +22,7 @@ public class BeanTranslator implements PropertyTranslator<Object> {
         }
 
         Object target = ClassHelper.instantiate(targetClass);
-        BeanCopierHelper.deepCopy(sourcePropValue, target, targetPropType);
+        BeanMapper.deepCopy(sourcePropValue, target, targetPropType);
         return target;
     }
 }
