@@ -35,10 +35,8 @@ public class MapTranslator implements PropertyTranslator<Map<?, ?>> {
 
             HashMap retMap = ClassHelper.instantiate(sourcePropValue.getClass());
             for (Map.Entry<?, ?> entry : sourceMap.entrySet()) {
-                Object sourceKey = entry.getKey();
-                Object targetKey = BeanCopierHelper.mapProperty(sourceKey, keyType);
-                Object sourceValue = entry.getValue();
-                Object targetValue = BeanCopierHelper.mapProperty(sourceValue, valueType);
+                Object targetKey = BeanCopierHelper.deepCopyFrom(entry.getKey(), keyType);
+                Object targetValue = BeanCopierHelper.deepCopyFrom(entry.getValue(), valueType);
                 //noinspection unchecked
                 retMap.put(targetKey, targetValue);
             }

@@ -62,8 +62,11 @@ public final class TranslatorRegistry {
      * 根据目标的属性类型获取对象的转换器
      */
     public static PropertyTranslator findPropertyTranslator(Class targetPropClass) {
-        Holder<PropertyTranslator> holder
-                = CachePropertyTranslatorMap.get(targetPropClass);
+        if (targetPropClass == null) {
+           return TranslatorRegistry.mapPropertyTranslator(Object.class);
+        }
+
+        Holder<PropertyTranslator> holder = CachePropertyTranslatorMap.get(targetPropClass);
 
         if (holder != null) {
             return holder.get();
@@ -93,7 +96,7 @@ public final class TranslatorRegistry {
         if (translator == null) {
             translator = TranslatorRegistry.mapPropertyTranslator(Object.class);
         }
-        
+
         holder = new Holder<>(translator);
         CachePropertyTranslatorMap.putIfAbsent(targetPropClass, holder);
 

@@ -1,5 +1,6 @@
 package com.github.codehorde.common.bean;
 
+import com.github.codehorde.common.bean.support.TypeRef;
 import net.sf.cglib.core.DebuggingClassWriter;
 
 import java.util.*;
@@ -13,7 +14,12 @@ public class BeanCopierTest {
 
         System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "/Users/baomingfeng/Downloads/cglib");
 
+        test1();
+        test2();
 
+    }
+
+    private static void test1() {
         PostOrderCommentVo commentVo = new PostOrderCommentVo();
         commentVo.setOrderId(3L);
         List<PostTradeCommentVo> tradeComments = new ArrayList<>();
@@ -69,8 +75,35 @@ public class BeanCopierTest {
         map.put(key, valueList);
         commentVo.setMap(map);
 
-        Object retVal = com.github.codehorde.common.bean.BeanCopierHelper.deepCopy(commentVo, PostOrderCommentDto.class);
+        Object retVal = BeanCopierHelper.deepCopyFrom(commentVo, PostOrderCommentDto.class);
 
         System.out.println(retVal);
+    }
+
+    private static void test2() {
+        List<PostTradeCommentVo> valueList = new ArrayList<>();
+        PostTradeCommentVo value1 = new PostTradeCommentVo();
+        value1.setTradeId(222L);
+        value1.setScore(222);
+        value1.setContent("Value1");
+        value1.setTags(Arrays.asList(222L, 222L));
+        valueList.add(value1);
+        PostTradeCommentVo value2 = new PostTradeCommentVo();
+        value2.setTradeId(333L);
+        value2.setScore(333);
+        value2.setContent("Value2");
+        value2.setTags(Arrays.asList(333L, 333L));
+        valueList.add(value2);
+
+        PageResult<PostTradeCommentVo> postTradeCommentVoPageResult = new PageResult<>();
+        postTradeCommentVoPageResult.setPageNo(7);
+        postTradeCommentVoPageResult.setPageSize(3);
+        postTradeCommentVoPageResult.setTotal(703L);
+        postTradeCommentVoPageResult.setData(valueList);
+        PageResult<PostTradeCommentDto> postTradeCommentDtoPageResult
+                = BeanCopierHelper.deepCopyFrom(postTradeCommentVoPageResult, new TypeRef<PageResult<PostTradeCommentDto>>() {
+        });
+
+        System.out.println(postTradeCommentDtoPageResult);
     }
 }

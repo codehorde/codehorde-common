@@ -19,9 +19,8 @@ public class SetTranslator implements PropertyTranslator<Set<?>> {
             Type componentType = ClassHelper.getCollectionItemType(targetPropType);
 
             Set retSet = ClassHelper.instantiate(sourcePropValue.getClass());
-            //noinspection Duplicates
             for (Object source : sourceSet) {
-                Object target = BeanCopierHelper.mapProperty(source, componentType);
+                Object target = BeanCopierHelper.deepCopyFrom(source, componentType);
                 //noinspection unchecked
                 retSet.add(target);
             }

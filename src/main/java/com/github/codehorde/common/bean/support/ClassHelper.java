@@ -56,12 +56,22 @@ public final class ClassHelper {
             MethodParameterTypeCache = new ConcurrentHashMap<>();
 
     /**
-     * 返回某个属性的方法的反省参数
+     * 返回某个属性的方法的泛型参数
      * <p>
      * 属性方法只有一个参数，如方法public void setSkus(List<ItemSkuDo> skus)
      */
     public static ParameterizedType getMethodParameterType(
-            Class targetClass, String methodName, Class<?> parameterClass) {
+            Type targetType, String methodName, Class<?> parameterClass) {
+        if (targetType instanceof ParameterizedType) {
+            return (ParameterizedType) targetType;
+        } else if (targetType instanceof Class) {
+            return getMethodParameterType((Class<?>) targetType, methodName, parameterClass);
+        }
+        throw new IllegalArgumentException("unsupported targetType: " + targetType);
+    }
+
+    public static ParameterizedType getMethodParameterType(
+            Class<?> targetClass, String methodName, Class<?> parameterClass) {
         ConcurrentMap<String, ConcurrentMap<Class<?>, Holder<ParameterizedType>>>
                 classMethodTypeMap = MethodParameterTypeCache.get(targetClass);
         if (classMethodTypeMap == null) {

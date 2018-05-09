@@ -19,9 +19,8 @@ public class ListTranslator implements PropertyTranslator<List<?>> {
             Type componentType = ClassHelper.getCollectionItemType(targetPropType);
 
             List retList = ClassHelper.instantiate(sourcePropValue.getClass());
-            //noinspection Duplicates
             for (Object source : sourceList) {
-                Object target = BeanCopierHelper.mapProperty(source, componentType);
+                Object target = BeanCopierHelper.deepCopyFrom(source, componentType);
                 //noinspection unchecked
                 retList.add(target);
             }

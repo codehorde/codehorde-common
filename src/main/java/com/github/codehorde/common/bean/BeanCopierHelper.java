@@ -59,18 +59,29 @@ public final class BeanCopierHelper {
      *     目标对象使用强制转换的结果，可能会报转换异常错误（ClassCastException）
      * </pre>
      */
-    public static <T> T deepCopy(Object source, Class<T> targetClass) {
-        T target = ClassHelper.instantiate(targetClass);
-        deepCopy(source, target);
-        return target;
-    }
-
     public static void deepCopy(Object source, Object target) {
         BeanCopier copier = findCopier(source.getClass(), target.getClass(), true);
         copier.copy(source, target, new CompatibleConverter(target.getClass()));
     }
 
-    public static Object mapProperty(Object value, Type type) {
+    public static void deepCopy(Object source, Object target, Type type) {
+        BeanCopier copier = findCopier(source.getClass(), target.getClass(), true);
+        copier.copy(source, target, new CompatibleConverter(type));
+    }
+
+    public static <T> T deepCopyFrom(Object source, Class<T> targetClass) {
+        T target = ClassHelper.instantiate(targetClass);
+        deepCopy(source, target);
+        return target;
+    }
+
+    public static <T> T deepCopyFrom(Object value, TypeRef<T> typeRef) {
+        Type type = typeRef.getType();
+        //noinspection unchecked
+        return (T) deepCopyFrom(value, type);
+    }
+
+    public static Object deepCopyFrom(Object value, Type type) {
         if (type == null) {
             return null;
         } else if (ClassHelper.isBasicClass(type)) {

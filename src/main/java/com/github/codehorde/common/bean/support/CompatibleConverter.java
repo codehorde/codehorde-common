@@ -3,6 +3,7 @@ package com.github.codehorde.common.bean.support;
 import net.sf.cglib.core.Converter;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * <pre>
@@ -12,10 +13,10 @@ import java.lang.reflect.ParameterizedType;
  */
 public class CompatibleConverter implements Converter {
 
-    private final Class targetClass;
+    private final Type targetType;
 
-    public CompatibleConverter(Class targetClass) {
-        this.targetClass = targetClass;
+    public CompatibleConverter(Type targetType) {
+        this.targetType = targetType;
     }
 
     @Override
@@ -27,7 +28,7 @@ public class CompatibleConverter implements Converter {
         PropertyTranslator propertyTranslator = TranslatorRegistry.findPropertyTranslator(targetPropClass);
         if (propertyTranslator != null) {
             ParameterizedType methodParameterType = ClassHelper
-                    .getMethodParameterType(targetClass, (String) context, targetPropClass);
+                    .getMethodParameterType(targetType, (String) context, targetPropClass);
             if (methodParameterType == null) {
                 return propertyTranslator.translate(sourcePropValue, targetPropClass);
             } else {

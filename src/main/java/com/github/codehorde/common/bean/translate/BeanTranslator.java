@@ -16,12 +16,13 @@ public class BeanTranslator implements PropertyTranslator<Object> {
     @Override
     public Object translate(Object sourcePropValue, Type targetPropType) {
         Class<?> targetClass = ClassHelper.getWrapClass(targetPropType);
+        
         if (targetClass == null) {
             return null;
         }
-        
+
         Object target = ClassHelper.instantiate(targetClass);
-        BeanCopierHelper.deepCopy(sourcePropValue, target);
+        BeanCopierHelper.deepCopy(sourcePropValue, target, targetPropType);
         return target;
     }
 }
