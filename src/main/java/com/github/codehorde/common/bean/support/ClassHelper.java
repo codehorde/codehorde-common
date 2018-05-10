@@ -167,7 +167,7 @@ public final class ClassHelper {
     public static <T> T instantiate(Class<?> clazz) {
         Boolean support = supportInstantiateCache.get(clazz);
         if (support == null) {
-            support = hasParameterlessPublicConstructor(clazz);
+            support = isInstantiatable(clazz);
             supportInstantiateCache.putIfAbsent(clazz, support);
             support = supportInstantiateCache.get(clazz);
         }
@@ -202,7 +202,11 @@ public final class ClassHelper {
     private static final ConcurrentMap<Class<?>, Boolean> supportInstantiateCache =
             new ConcurrentHashMap<>(256);
 
-    private static boolean hasParameterlessPublicConstructor(Class<?> clazz) {
+    private static boolean isInstantiatable(Class<?> clazz) {
+        if (!Modifier.isPublic(clazz.getModifiers())
+                || !Modifier.isAbstract(clazz.getModifiers())) {
+            return false;
+        }
         for (Constructor<?> constructor : clazz.getConstructors()) {
             // In Java 7-, use getParameterTypes and check the length of the array returned
             if (constructor.getParameterTypes().length == 0) {
