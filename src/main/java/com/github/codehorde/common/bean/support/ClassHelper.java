@@ -49,12 +49,6 @@ public final class ClassHelper {
         return BasicClasses.contains(type);
     }
 
-    /*
-        <targetClass, <methodName, <parameterClass, ParameterizedType>>>
-    */
-    private static ConcurrentMap<Class<?>, ConcurrentMap<String, ConcurrentMap<Class<?>, Holder<ParameterizedType>>>>
-            MethodParameterTypeCache = new ConcurrentHashMap<>();
-
     /**
      * 返回某个属性的方法的泛型参数
      * <p>
@@ -69,6 +63,12 @@ public final class ClassHelper {
         }
         throw new IllegalArgumentException("unsupported targetType: " + targetType);
     }
+
+    /*
+        <targetClass, <methodName, <parameterClass, ParameterizedType>>>
+    */
+    private static ConcurrentMap<Class<?>, ConcurrentMap<String, ConcurrentMap<Class<?>, Holder<ParameterizedType>>>>
+            MethodParameterTypeCache = new ConcurrentHashMap<>();
 
     public static ParameterizedType getMethodParameterType(
             Class<?> targetClass, String methodName, Class<?> parameterClass) {
@@ -204,7 +204,7 @@ public final class ClassHelper {
 
     private static boolean isInstantiatable(Class<?> clazz) {
         if (!Modifier.isPublic(clazz.getModifiers())
-                || !Modifier.isAbstract(clazz.getModifiers())) {
+                || Modifier.isAbstract(clazz.getModifiers())) {
             return false;
         }
         for (Constructor<?> constructor : clazz.getConstructors()) {
