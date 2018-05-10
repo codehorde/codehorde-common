@@ -105,5 +105,10 @@ public class BeanCopierTest {
         });
 
         System.out.println(postTradeCommentDtoPageResult);
+
+        List<PostTradeCommentDto> dtoList
+                = BeanMapper.deepCopyFrom(valueList, new TypeRef<List<PostTradeCommentDto>>() {
+        });
+        System.out.println(dtoList);
     }
 }
