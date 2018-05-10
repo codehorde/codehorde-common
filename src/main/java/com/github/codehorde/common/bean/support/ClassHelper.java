@@ -41,7 +41,7 @@ public final class ClassHelper {
         BasicClasses.addAll(
                 Arrays.asList(Long.class, Double.class, Integer.class, Short.class,
                         Character.class, Boolean.class, Void.class,
-                        Date.class, String.class, BigDecimal.class, BigInteger.class)
+                        String.class, BigDecimal.class, BigInteger.class)
         );
     }
 
