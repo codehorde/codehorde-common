@@ -70,19 +70,25 @@ public final class BeanMapper {
     }
 
     public static <T> T deepCopyFrom(Object source, Class<T> targetClass) {
+        if (source == null) {
+            return null;
+        }
         T target = ClassHelper.instantiate(targetClass);
         deepCopy(source, target);
         return target;
     }
 
     public static <T> T deepCopyFrom(Object value, TypeRef<T> typeRef) {
+        if (value == null) {
+            return null;
+        }
         Type type = typeRef.getType();
         //noinspection unchecked
         return (T) deepCopyFrom(value, type);
     }
 
     public static Object deepCopyFrom(Object value, Type type) {
-        if (type == null) {
+        if (value == null || type == null) {
             return null;
         } else if (ClassHelper.isBasicClass(type)) {
             return value;
