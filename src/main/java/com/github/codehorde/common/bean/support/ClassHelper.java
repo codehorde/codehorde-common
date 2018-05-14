@@ -30,10 +30,6 @@ public final class ClassHelper {
         PrimaryWrapTypeMap.put(void.class, Void.class);
     }
 
-    public static Class<?> mapWrappedClass(Class<?> primaryClass) {
-        return PrimaryWrapTypeMap.get(primaryClass);
-    }
-
     private static final CopyOnWriteArraySet<Type>
             BasicClasses = new CopyOnWriteArraySet<>();
 
@@ -43,6 +39,8 @@ public final class ClassHelper {
                         Character.class, Boolean.class, Void.class,
                         String.class, BigDecimal.class, BigInteger.class)
         );
+        BasicClasses.addAll(PrimaryWrapTypeMap.keySet());
+        BasicClasses.addAll(PrimaryWrapTypeMap.values());
     }
 
     public static boolean isBasicClass(Type type) {
